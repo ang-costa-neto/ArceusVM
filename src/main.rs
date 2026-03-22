@@ -1,37 +1,39 @@
-use arceus_vm::common::OpCode;
-use arceus_vm::value::Value;
 use arceus_vm::chunk::Chunk;
-use arceus_vm::vm::VM;
+use arceus_vm::vm::{VM, InterpretResult};
+use arceus_vm::compiler::Compiler;
 
 fn main() {
-    println!("--- ArceusVM: High-Performance Execution Test ---");
+    println!("--- ArceusVM: High-Performance Language Shell ---");
 
-    // 1. Create a new chunk of code
+    // This source string will soon be read from a .arc file
+    let source = "print 5.5 + 10.5;";
+
+    // 1. Initialize the shared Bytecode Chunk
     let mut chunk = Chunk::new();
 
-    // 2. Add constants to the pool (5.0 and 10.5)
-    let constant_a = chunk.add_constant(Value::number(5.0));
-    let constant_b = chunk.add_constant(Value::number(10.5));
+    // 2. Initialize the Compiler with the source code
+    let mut compiler = Compiler::new(source);
 
-    // 3. Write instructions to the chunk
-    // Load 5.0
-    chunk.write(OpCode::Constant as u8);
-    chunk.write(constant_a);
+    println!("Compiling source...");
 
-    // Load 10.5
-    chunk.write(OpCode::Constant as u8);
-    chunk.write(constant_b);
+    // 3. Run the Compilation phase
+    // For now, it only scans tokens. In the next step, it will emit bytecode.
+    if !compiler.compile(&mut chunk) {
+        eprintln!("Compilation failed.");
+        std::process::exit(65); // Standard exit code for data format error
+    }
 
-    // Add them together (5.0 + 10.5)
-    chunk.write(OpCode::Add as u8);
+    println!("Executing...");
 
-    // Return and print result
-    chunk.write(OpCode::Return as u8);
-
-    // 4. Initialize the VM with our bytecode and constants
+    // 4. Hand over the compiled chunk to the VM
     let mut vm = VM::new(chunk.code, chunk.constants);
-
-    // 5. Run the engine!
-    println!("Executing bytecode...");
-    vm.run();
+    
+    match vm.run() {
+        InterpretResult::Ok => println!("\nExecution finished successfully."),
+        InterpretResult::RuntimeError => {
+            eprintln!("Runtime error occurred.");
+            std::process::exit(70); // Standard exit code for internal software error
+        }
+        InterpretResult::CompileError => unreachable!(), // Handled in the compiler phase
+    }
 }
