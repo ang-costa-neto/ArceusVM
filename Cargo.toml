@@ -1,0 +1,24 @@
+[package]
+name = "arceus-vm"
+version = "0.1.0"
+edition = "2021"
+authors = ["Angelo Costa Neto <ang.costa.neto@gmail.com>"]
+description = "A high-performance stack-based VM featuring NaN-boxing and custom ISA."
+
+[dependencies]
+thiserror = "1.0"
+clap = { version = "4.0", features = ["derive"] }
+
+[dev-dependencies]
+criterion = "0.5"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true
+
+[[bench]]
+name = "vm_bench"
+harness = false

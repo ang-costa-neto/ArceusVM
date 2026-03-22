@@ -1,0 +1,4 @@
+error: failed to parse manifest at `/Users/angelo.costa/Documents/ArceusVM/Cargo.toml`
+
+Caused by:
+  can't find `vm_bench` bench at `benches/vm_bench.rs` or `benches/vm_bench/main.rs`. Please specify bench.path if you want to use a non-default path.
