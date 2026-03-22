@@ -2,22 +2,25 @@
 name = "arceus-vm"
 version = "0.1.0"
 edition = "2021"
-authors = ["Angelo Costa Neto <ang.costa.neto@gmail.com>"]
-description = "A high-performance stack-based VM featuring NaN-boxing and custom ISA."
+authors = ["Angelo Costa Netp <ang.costa.neto@gmail.com>"]
+description = "High-performance stack-based VM with NaN-boxing and custom ISA."
 
 [dependencies]
+# Idiomatic error handling
 thiserror = "1.0"
+# Robust CLI for VM interaction
 clap = { version = "4.0", features = ["derive"] }
 
 [dev-dependencies]
+# Statistical benchmarking (industry standard for performance)
 criterion = "0.5"
 
 [profile.release]
-opt-level = 3
-lto = true
-codegen-units = 1
-panic = "abort"
-strip = true
+opt-level = 3       # Maximum optimization
+lto = true          # Link Time Optimization (critical for VM performance)
+codegen-units = 1   # Better global optimizations at the cost of compile time
+panic = "abort"     # Reduces binary size and stack unwinding overhead
+strip = true        # Removes debug symbols for a smaller, faster binary
 
 [[bench]]
 name = "vm_bench"
